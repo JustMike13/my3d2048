@@ -8,7 +8,6 @@ public class GameController : MonoBehaviour
     GameObject BlockObject;
     const float zPos = -480;
     const int matrixSize = 4;
-    int test1, test2, test3;
     Vector3[] Positions =
     {
         new Vector3(0, 8, zPos),
@@ -32,12 +31,9 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        test1 = 1;
-        test2 = 2;
-        test3 = 3;
-        CreateBlock(test3, test1);
-        CreateBlock(2, 2);
-        CreateBlock(2, 3);
+        GenerateNewBlock();
+        GenerateNewBlock();
+        GenerateNewBlock();
     }
 
     // Update is called once per frame
@@ -60,6 +56,16 @@ public class GameController : MonoBehaviour
             MoveRight();
             GenerateNewBlock();
         }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            MoveUp();
+            GenerateNewBlock();
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            MoveDown();
+            GenerateNewBlock();
+        }
     }
 
     void GenerateNewBlock()
@@ -79,6 +85,56 @@ public class GameController : MonoBehaviour
             int test1 = Random.Range(0, x);
             Vector2 position = MatrixPosition(availablePositions[test1]);
             CreateBlock((int)position[0], (int)position[1]);
+        }
+        else
+        {
+            IsGameOver();
+        }
+    }
+
+    private void IsGameOver()
+    {
+        bool gameOver = true;
+        for (int i = 0; i < 16; i++)
+        {
+            int x = (int)MatrixPosition(i)[0], y = (int)MatrixPosition(i)[1];
+            if (x > 0)
+            {
+                if (Blocks[i].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(x - 1, y)].GetComponent<Block>().GetValue())
+                {
+                    gameOver = false;
+                    break;
+                }
+            }
+            if (x < matrixSize - 1)
+            {
+                if (Blocks[i].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(x + 1, y)].GetComponent<Block>().GetValue())
+                {
+                    gameOver = false;
+                    break;
+                }
+            }
+            if (y > 0)
+            {
+                if (Blocks[i].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(x, y - 1)].GetComponent<Block>().GetValue())
+                {
+                    gameOver = false;
+                    break;
+                }
+            }
+            if (y < matrixSize - 1)
+            {
+                if (Blocks[i].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(x, y + 1)].GetComponent<Block>().GetValue())
+                {
+                    gameOver = false;
+                    break;
+                }
+            }
+        }
+
+        if (gameOver)
+        {
+            Debug.LogError("Game Over");
         }
     }
 
@@ -150,6 +206,80 @@ public class GameController : MonoBehaviour
                     else
                     {
                         MoveBlock(i, j, i, k - 1);
+                    }
+                }
+            }
+        }
+    }
+
+    void MoveUp()
+    {
+        for (int i = 0; i < matrixSize; i++)
+        {
+            for (int j = 1; j < matrixSize; j++)
+            {
+                if (Blocks[MatrixPosition(j, i)] != null)
+                {
+                    int k = j - 1;
+                    while (Blocks[MatrixPosition(k, i)] == null && k != -1)
+                    {
+                        k--;
+                        if (k == -1)
+                        {
+                            break;
+                        }
+                    }
+                    if (k == -1)
+                    {
+                        MoveBlock(j, i, 0, i);
+                    }
+                    else if (Blocks[MatrixPosition(j, i)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(k, i)].GetComponent<Block>().GetValue())
+                    {
+                        Destroy(Blocks[MatrixPosition(k, i)]);
+                        Blocks[MatrixPosition(k, i)] = null;
+                        MoveBlock(j, i, k, i);
+                        Blocks[MatrixPosition(k, i)].GetComponent<Block>().IncreaseValue();
+                    }
+                    else
+                    {
+                        MoveBlock(j, i, k + 1, i);
+                    }
+                }
+            }
+        }
+    }
+
+    void MoveDown()
+    {
+        for (int i = 0; i < matrixSize; i++)
+        {
+            for (int j = matrixSize - 2; j >= 0; j--)
+            {
+                if (Blocks[MatrixPosition(j, i)] != null)
+                {
+                    int k = j + 1;
+                    while (Blocks[MatrixPosition(k, i)] == null)
+                    {
+                        k++;
+                        if (k == 4)
+                        {
+                            break;
+                        }
+                    }
+                    if (k == 4)
+                    {
+                        MoveBlock(j, i, 3, i);
+                    }
+                    else if (Blocks[MatrixPosition(j, i)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(k, i)].GetComponent<Block>().GetValue())
+                    {
+                        Destroy(Blocks[MatrixPosition(k, i)]);
+                        Blocks[MatrixPosition(k, i)] = null;
+                        MoveBlock(j, i, k, i);
+                        Blocks[MatrixPosition(k, i)].GetComponent<Block>().IncreaseValue();
+                    }
+                    else
+                    {
+                        MoveBlock(j, i, k - 1, i);
                     }
                 }
             }

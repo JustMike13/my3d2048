@@ -5,8 +5,9 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     private Vector3 destination;
+    [SerializeField]
     private int value;
-    const float speed = 100;
+    const float speed = 10;
     [SerializeField]
     GameObject[] Materials = new GameObject[12];
     // Start is called before the first frame update
