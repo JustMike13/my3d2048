@@ -49,22 +49,40 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             MoveLeft();
-            GenerateNewBlock();
+            AfterMove();
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             MoveRight();
-            GenerateNewBlock();
+            AfterMove();
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             MoveUp();
-            GenerateNewBlock();
+            AfterMove();
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             MoveDown();
-            GenerateNewBlock();
+            AfterMove();
+        }
+    }
+
+    void AfterMove()
+    {
+        GenerateNewBlock();
+        UnlockBlocks();
+    }
+
+    private void UnlockBlocks()
+    {
+        foreach (GameObject block in Blocks)
+        {
+            if (block == null)
+            {
+                continue;
+            }
+            block.GetComponent<Block>().Unlock();
         }
     }
 
@@ -138,6 +156,15 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private void MergeBlocks(int i, int j, int x, int y)
+    {
+        Destroy(Blocks[MatrixPosition(x, y)]);
+        Blocks[MatrixPosition(x, y)] = null;
+        MoveBlock(i, j, x, y);
+        Blocks[MatrixPosition(x, y)].GetComponent<Block>().IncreaseValue();
+        Blocks[MatrixPosition(x, y)].GetComponent<Block>().Lock();
+    }
+
     void MoveLeft()
     {
         for(int i = 0; i < matrixSize; i++)
@@ -159,12 +186,10 @@ public class GameController : MonoBehaviour
                     {
                          MoveBlock(i, j, i, 0);
                     }
-                    else if (Blocks[MatrixPosition(i, j)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(i, k)].GetComponent<Block>().GetValue())
+                    else if (Blocks[MatrixPosition(i, j)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(i, k)].GetComponent<Block>().GetValue()
+                        && !Blocks[MatrixPosition(i, k)].GetComponent<Block>().IsLocked())
                     {
-                        Destroy(Blocks[MatrixPosition(i, k)]);
-                        Blocks[MatrixPosition(i, k)] = null;
-                        MoveBlock(i, j, i, k);
-                        Blocks[MatrixPosition(i, k)].GetComponent<Block>().IncreaseValue();
+                        MergeBlocks(i, j, i, k);
                     }
                     else
                     {
@@ -196,12 +221,10 @@ public class GameController : MonoBehaviour
                     {
                         MoveBlock(i, j, i, 3);
                     }
-                    else if (Blocks[MatrixPosition(i, j)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(i, k)].GetComponent<Block>().GetValue())
+                    else if (Blocks[MatrixPosition(i, j)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(i, k)].GetComponent<Block>().GetValue()
+                        && !Blocks[MatrixPosition(i, k)].GetComponent<Block>().IsLocked())
                     {
-                        Destroy(Blocks[MatrixPosition(i, k)]);
-                        Blocks[MatrixPosition(i, k)] = null;
-                        MoveBlock(i, j, i, k);
-                        Blocks[MatrixPosition(i, k)].GetComponent<Block>().IncreaseValue();
+                        MergeBlocks(i, j, i, k);
                     }
                     else
                     {
@@ -233,12 +256,10 @@ public class GameController : MonoBehaviour
                     {
                         MoveBlock(j, i, 0, i);
                     }
-                    else if (Blocks[MatrixPosition(j, i)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(k, i)].GetComponent<Block>().GetValue())
+                    else if (Blocks[MatrixPosition(j, i)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(k, i)].GetComponent<Block>().GetValue()
+                        && !Blocks[MatrixPosition(k, i)].GetComponent<Block>().IsLocked())
                     {
-                        Destroy(Blocks[MatrixPosition(k, i)]);
-                        Blocks[MatrixPosition(k, i)] = null;
-                        MoveBlock(j, i, k, i);
-                        Blocks[MatrixPosition(k, i)].GetComponent<Block>().IncreaseValue();
+                        MergeBlocks(j, i, k, i);
                     }
                     else
                     {
@@ -270,12 +291,10 @@ public class GameController : MonoBehaviour
                     {
                         MoveBlock(j, i, 3, i);
                     }
-                    else if (Blocks[MatrixPosition(j, i)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(k, i)].GetComponent<Block>().GetValue())
+                    else if (Blocks[MatrixPosition(j, i)].GetComponent<Block>().GetValue() == Blocks[MatrixPosition(k, i)].GetComponent<Block>().GetValue()
+                        && !Blocks[MatrixPosition(k, i)].GetComponent<Block>().IsLocked())
                     {
-                        Destroy(Blocks[MatrixPosition(k, i)]);
-                        Blocks[MatrixPosition(k, i)] = null;
-                        MoveBlock(j, i, k, i);
-                        Blocks[MatrixPosition(k, i)].GetComponent<Block>().IncreaseValue();
+                        MergeBlocks(j, i, k, i);
                     }
                     else
                     {
