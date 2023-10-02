@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 
@@ -11,6 +12,8 @@ public class GameController : MonoBehaviour
     int playState; 
     [SerializeField]
     GameObject BlockObject;
+    [SerializeField]
+    TextMeshProUGUI ScoreText;
     const float zPos = -480;
     const int matrixSize = 4;
     Vector3[] Positions =
@@ -33,9 +36,11 @@ public class GameController : MonoBehaviour
         new Vector3(6, 2, zPos),
     };
     GameObject[] Blocks = new GameObject[16];
+    int Score;
     // Start is called before the first frame update
     void Start()
     {
+        Score = 0;
         playState = IN_GAME;
         GenerateNewBlock();
         GenerateNewBlock();
@@ -169,6 +174,13 @@ public class GameController : MonoBehaviour
         MoveBlock(i, j, x, y);
         Blocks[MatrixPosition(x, y)].GetComponent<Block>().IncreaseValue();
         Blocks[MatrixPosition(x, y)].GetComponent<Block>().Lock();
+        IncreaseScore(Blocks[MatrixPosition(x, y)].GetComponent<Block>().GetValue());
+    }
+
+    private void IncreaseScore(int s)
+    {
+        Score += s;
+        ScoreText.text = Score.ToString();
     }
 
     void MoveLeft()
