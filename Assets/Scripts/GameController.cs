@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -75,6 +75,10 @@ public class GameController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Application.Quit();
+            }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene("SampleScene");
             }
         }
     }
