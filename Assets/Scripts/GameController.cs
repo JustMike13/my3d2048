@@ -2,8 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GameController : MonoBehaviour
 {
+    const int IN_GAME = 0;
+    const int PAUSED = 1;
+    const int GAME_OVER = 2;
+    int playState; 
     [SerializeField]
     GameObject BlockObject;
     const float zPos = -480;
@@ -31,6 +36,7 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playState = IN_GAME;
         GenerateNewBlock();
         GenerateNewBlock();
         GenerateNewBlock();
@@ -39,32 +45,32 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.E))
-        //{
-        //    MoveBlock(test3, test1, test3, test2);
-        //    int aux = test1;
-        //    test1 = test2;
-        //    test2 = aux;
-        //}
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (playState == IN_GAME)
         {
-            MoveLeft();
-            AfterMove();
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            MoveRight();
-            AfterMove();
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            MoveUp();
-            AfterMove();
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            MoveDown();
-            AfterMove();
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                MoveLeft();
+                AfterMove();
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                MoveRight();
+                AfterMove();
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                MoveUp();
+                AfterMove();
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                MoveDown();
+                AfterMove();
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
         }
     }
 
