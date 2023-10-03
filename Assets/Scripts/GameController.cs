@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour
     [SerializeField]
     GameObject BlockObject;
     [SerializeField]
-    TextMeshProUGUI ScoreText;
+    GameObject GameOverPrefab;
     const float zPos = -480;
     const int matrixSize = 4;
     Vector3[] Positions =
@@ -36,11 +36,11 @@ public class GameController : MonoBehaviour
         new Vector3(6, 2, zPos),
     };
     GameObject[] Blocks = new GameObject[16];
-    int Score;
+    UIController UI;
     // Start is called before the first frame update
     void Start()
     {
-        Score = 0;
+        UI = GetComponent<UIController>();
         playState = IN_GAME;
         GenerateNewBlock();
         GenerateNewBlock();
@@ -168,6 +168,9 @@ public class GameController : MonoBehaviour
         if (gameOver)
         {
             Debug.LogError("Game Over");
+            playState = GAME_OVER;
+            GameObject gameOverObject = Instantiate(GameOverPrefab, new Vector3(3.13f, 5, -482), Quaternion.identity);
+            gameOverObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
         }
     }
 
@@ -178,14 +181,9 @@ public class GameController : MonoBehaviour
         MoveBlock(i, j, x, y);
         Blocks[MatrixPosition(x, y)].GetComponent<Block>().IncreaseValue();
         Blocks[MatrixPosition(x, y)].GetComponent<Block>().Lock();
-        IncreaseScore(Blocks[MatrixPosition(x, y)].GetComponent<Block>().GetValue());
+        UI.IncreaseScore(Blocks[MatrixPosition(x, y)].GetComponent<Block>().GetValue());
     }
 
-    private void IncreaseScore(int s)
-    {
-        Score += s;
-        ScoreText.text = Score.ToString();
-    }
 
     void MoveLeft()
     {

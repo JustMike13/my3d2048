@@ -86,4 +86,14 @@ public class Block : MonoBehaviour
     {
         return isLocked;
     }
+
+    public void SetLevel(int level)
+    {
+        int v = 2;
+        for (int i = 1; i < level; i++)
+        {
+            v = v * 2;
+        }
+        SetValue(v);
+    }
 }
