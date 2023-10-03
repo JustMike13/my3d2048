@@ -22,7 +22,7 @@ public class GameOverController : MonoBehaviour
     {
         foreach(Block block in blocks)
         {
-            int r = UnityEngine.Random.Range(0, 10);
+            int r = UnityEngine.Random.Range(0, 12);
             block.SetLevel(r);
         }
     }
