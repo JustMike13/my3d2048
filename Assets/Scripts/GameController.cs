@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     GameObject BlockObject;
     [SerializeField]
     GameObject GameOverPrefab;
+    GameObject GameOverObject;
     const float zPos = -480;
     const int matrixSize = 4;
     Vector3[] Positions =
@@ -41,8 +42,19 @@ public class GameController : MonoBehaviour
     void Start()
     {
         UI = GetComponent<UIController>();
-        playState = IN_GAME;
+        playState = PAUSED;
         GenerateNewBlock();
+        GenerateNewBlock();
+    }
+
+    public void Restart()
+    {
+        Destroy(GameOverObject);
+        foreach(GameObject block in Blocks)
+        {
+            Destroy(block);
+        }
+        Blocks = new GameObject[16];
         GenerateNewBlock();
         GenerateNewBlock();
     }
@@ -71,14 +83,6 @@ public class GameController : MonoBehaviour
             {
                 MoveDown();
                 AfterMove();
-            }
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                SceneManager.LoadScene("SampleScene");
             }
         }
     }
@@ -169,8 +173,8 @@ public class GameController : MonoBehaviour
         {
             Debug.LogError("Game Over");
             playState = GAME_OVER;
-            GameObject gameOverObject = Instantiate(GameOverPrefab, new Vector3(3.13f, 5, -482), Quaternion.identity);
-            gameOverObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+            GameOverObject = Instantiate(GameOverPrefab, new Vector3(3.13f, 5, -482), Quaternion.identity);
+            GameOverObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
         }
     }
 
@@ -376,5 +380,15 @@ public class GameController : MonoBehaviour
     int MatrixPosition(int i, int j)
     {
         return (i * 4 + j);
+    }
+
+    public void Pause()
+    {
+        playState = PAUSED;
+    }
+
+    public void Resume()
+    {
+        playState = IN_GAME;
     }
 }
